@@ -3,66 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hachinet Login</title>
+<title>Hachinet</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#0f0f0f;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center}
-.card{background:#1a1a1a;padding:30px;border-radius:20px;width:90%;max-width:350px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5)}
-h1{margin-bottom:20px;font-size:22px}
+body{background:#0f0f0f;color:#fff;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px}
+.lamp-box{text-align:center;margin-bottom:25px}
+#bulb{font-size:110px;cursor:pointer;user-select:none}
+#bulb.on{filter:drop-shadow(0 0 35px yellow)}
+#status{margin-top:5px;color:#aaa;font-size:14px}
+.card{background:#1a1a1a;padding:25px;border-radius:20px;width:100%;max-width:350px;text-align:center}
+h1{margin-bottom:15px;font-size:20px}
 input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #333;background:#222;color:#fff;outline:none}
 button{width:100%;padding:12px;background:#ff2e7e;color:#fff;border:0;border-radius:10px;font-size:16px;margin-top:10px;cursor:pointer}
-#app{display:none;text-align:center}
-#bulb{font-size:100px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:.2s}
-#bulb.on{filter:drop-shadow(0 0 30px yellow)}
-#status{margin-top:10px;color:#aaa}
 #error{color:#ff5555;font-size:13px;margin-top:8px;display:none}
+#appInside{display:none;margin-top:15px;color:#4dff88}
 </style>
 </head>
 <body>
 
-<!-- HALAMAN LOGIN -->
+<!-- LAMPU DI LUAR - BISA DIKLIK TANPA LOGIN -->
+<div class="lamp-box">
+  <div id="bulb">💡</div>
+  <div id="status">Klik Lampu - Kroncong Protol 🎵</div>
+</div>
+
+<!-- LOGIN ADMIN / ADMIN -->
 <div class="card" id="loginPage">
   <h1>🔐 HACHINET LOGIN</h1>
   <input type="text" id="username" placeholder="Username" autocomplete="off">
   <input type="password" id="password" placeholder="Password">
   <button onclick="doLogin()">MASUK</button>
   <div id="error">Username / Password salah!</div>
-  <p style="font-size:12px;color:#777;margin-top:15px">User: admin | Pass: admin</p>
-</div>
-
-<!-- HALAMAN APLIKASI -->
-<div id="app">
-  <div id="bulb">💡</div>
-  <div id="status">Lampu Mati - Klik Lampu</div>
-  <br>
-  <button onclick="logout()" style="width:auto;padding:8px 20px;background:#333">Logout</button>
+  <p style="font-size:12px;color:#777;margin-top:12px">User: admin | Pass: admin</p>
+  <div id="appInside">✅ Berhasil Masuk! Selamat datang Admin.</div>
 </div>
 
 <div id="yt-player" style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;"></div>
 
 <script>
-// === LOGIN ADMIN / ADMIN ===
 function doLogin(){
   const u = document.getElementById('username').value.trim();
   const p = document.getElementById('password').value.trim();
   if(u === 'admin' && p === 'admin'){
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+    document.getElementById('appInside').style.display = 'block';
+    document.getElementById('error').style.display = 'none';
   } else {
     document.getElementById('error').style.display = 'block';
   }
 }
-function logout(){
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginPage').style.display = 'block';
-  stopProtol();
-  document.getElementById('bulb').classList.remove('on');
-  document.getElementById('status').innerText = 'Lampu Mati - Klik Lampu';
-}
-// Enter juga bisa login
 document.getElementById('password').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 
-// === YOUTUBE - KRONCONG PROTOL ===
+// YOUTUBE - KRONCONG PROTOL
 let ytPlayer = null;
 let ytReady = false;
 var tag = document.createElement('script');
@@ -77,27 +68,19 @@ function onYouTubeIframeAPIReady(){
   });
 }
 function playProtol(){
-  if(!ytReady || !ytPlayer) { alert('Tunggu 3 detik, YouTube lagi loading...'); return; }
+  if(!ytReady || !ytPlayer){ alert('Tunggu 3 detik, YouTube lagi loading...'); return; }
   ytPlayer.seekTo(0, true);
   ytPlayer.playVideo();
 }
 function stopProtol(){ if(ytPlayer) ytPlayer.pauseVideo(); }
 
-// === LAMPU ===
 const bulb = document.getElementById('bulb');
 const statusText = document.getElementById('status');
-function toggleLamp(){
+bulb.addEventListener('click', ()=>{
   const isOn = bulb.classList.toggle('on');
-  if(isOn){
-    statusText.innerText = 'Lampu Nyala - Kroncong Protol 🎵';
-    playProtol();
-  } else {
-    statusText.innerText = 'Lampu Mati - Klik Lampu';
-    stopProtol();
-  }
-}
-bulb.addEventListener('click', toggleLamp);
-bulb.addEventListener('touchstart', function(e){ e.preventDefault(); toggleLamp(); }, {passive:false});
+  if(isOn){ statusText.innerText = 'Lampu Nyala - Kroncong Protol 🎵'; playProtol(); }
+  else { statusText.innerText = 'Lampu Mati - Klik Lampu'; stopProtol(); }
+});
 </script>
 </body>
 </html>
